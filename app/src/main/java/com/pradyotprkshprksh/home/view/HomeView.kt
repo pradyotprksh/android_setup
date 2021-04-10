@@ -31,7 +31,7 @@ class HomeView : AppCompatActivity(), HomeContract.View {
         homePresenter.start()
     }
 
-    override fun getTodoList(pendingTodos: ArrayList<Todo>, completedTodos: ArrayList<Todo>) {
+    override fun updateTodoList(pendingTodos: ArrayList<Todo>, completedTodos: ArrayList<Todo>) {
         todoListViewPagerAdapter = TodoListViewPagerAdapter(this, pendingTodos, completedTodos)
         viewPage.adapter = todoListViewPagerAdapter
 

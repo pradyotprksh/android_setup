@@ -20,7 +20,7 @@ class TodoListViewPagerAdapter(fragmentActivity: FragmentActivity,
     }
 
     override fun createFragment(position: Int): Fragment {
-        var bundle = Bundle()
+        val bundle = Bundle()
         if (position == 0) {
             val pendingFragment = PendingFragment()
             bundle.putParcelableArrayList("pendingTodo", pendingTodo)

@@ -9,7 +9,7 @@ import java.util.ArrayList
  */
 interface HomeContract {
     interface View : MainContract.View {
-        fun getTodoList(pendingTodos: ArrayList<Todo>, completedTodos: ArrayList<Todo>)
+        fun updateTodoList(pendingTodos: ArrayList<Todo>, completedTodos: ArrayList<Todo>)
     }
 
     interface Presenter : MainContract.Presenter {

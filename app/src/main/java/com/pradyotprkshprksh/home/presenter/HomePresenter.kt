@@ -56,13 +56,12 @@ class HomePresenter(private var view: HomeContract.View?) : HomeContract.Present
                         }
                     }
 
-                    view?.getTodoList(pendingTodos, completedTodos)
+                    view?.updateTodoList(pendingTodos, completedTodos)
                 }
             }
 
             override fun onFailure(call: Call<List<Todo>>?, t: Throwable?) {
                 view?.hideLoading()
-                Log.d("PRINT", t.toString())
             }
         })
     }
