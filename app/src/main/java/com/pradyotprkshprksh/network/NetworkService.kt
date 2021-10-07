@@ -1,10 +1,10 @@
 package com.pradyotprkshprksh.network
 
-import com.pradyotprkshprksh.home.presenter.models.Todo
+import com.pradyotprkshprksh.network.models.Quotes
 import retrofit2.Call
 import retrofit2.http.GET
 
 interface NetworkService {
-    @GET("5a8e5b372f000048004f25fc")
-    fun getTodoList() : Call<List<Todo>>
+    @GET("v1/quotes")
+    fun getRandomQuote(): Call<List<Quotes>>
 }

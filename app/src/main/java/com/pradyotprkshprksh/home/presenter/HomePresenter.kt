@@ -1,15 +1,12 @@
 package com.pradyotprkshprksh.home.presenter
 
-import android.util.Log
 import com.pradyotprkshprksh.home.HomeContract
-import com.pradyotprkshprksh.home.presenter.models.Todo
 import com.pradyotprkshprksh.network.NetworkService
+import com.pradyotprkshprksh.network.models.Quotes
+import com.pradyotprkshprksh.utility.Utility
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.util.ArrayList
 
 /**
  * Home presenter which will handle our presenter or the business logic of our
@@ -17,52 +14,42 @@ import java.util.ArrayList
  *
  * @param view : The view part of our home module to update the view from our presenter layer.
  */
-class HomePresenter(private var view: HomeContract.View?) : HomeContract.Presenter {
+class HomePresenter(
+    private var view: HomeContract.View?,
+    private val networkService: NetworkService
+) : HomeContract.Presenter {
     override fun start() {
-        getTheToDoList()
+        getRandomQuote()
+    }
+
+    private fun getRandomQuote() {
+        view?.showLoading()
+        try {
+            networkService.getRandomQuote().enqueue(object : Callback<List<Quotes>> {
+                override fun onResponse(
+                    call: Call<List<Quotes>>?,
+                    response: Response<List<Quotes>>?
+                ) {
+                    view?.hideLoading()
+                    if (response != null) {
+                        val quotes = response.body()
+                        if (quotes != null) {
+                            view?.setQuote(quotes.first().quote, quotes.first().author)
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<List<Quotes>>?, t: Throwable?) {
+                    view?.hideLoading()
+                }
+            })
+        } catch (e: Exception) {
+            view?.hideLoading()
+            Utility.printMessage(e.toString())
+        }
     }
 
     override fun stop() {
 
-    }
-
-    /**
-     * Get the list of todos from the api
-     */
-    private fun getTheToDoList() {
-        view?.showLoading()
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://www.mocky.io/v2/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        val service = retrofit.create(NetworkService::class.java)
-        val call = service.getTodoList();
-
-        call.enqueue(object : Callback<List<Todo>> {
-            override fun onResponse(call: Call<List<Todo>>?, response: Response<List<Todo>>?) {
-                view?.hideLoading()
-                val todos = response?.body()
-                if (todos != null) {
-                    val pendingTodos: ArrayList<Todo> = ArrayList<Todo>()
-                    val completedTodos: ArrayList<Todo> = ArrayList<Todo>()
-
-                    for (todo in todos) {
-                        if (todo.status == "PENDING") {
-                            pendingTodos.add(todo)
-                        } else {
-                            completedTodos.add(todo)
-                        }
-                    }
-
-                    view?.updateTodoList(pendingTodos, completedTodos)
-                }
-            }
-
-            override fun onFailure(call: Call<List<Todo>>?, t: Throwable?) {
-                view?.hideLoading()
-            }
-        })
     }
 }
